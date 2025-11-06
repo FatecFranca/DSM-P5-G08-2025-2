@@ -43,9 +43,9 @@ O treinamento gera artefatos consumidos pela API:
 - artifacts/feature_cols.json — colunas usadas na inferência
 - artifacts/universe_features.csv — features finais por ticker
 
-Execute:
-bash
-python train_supervised.py
+Abra o notebook supervised_train.py, dentro da pasta notebooks
+Execute a célula dentro dele para realizar o treinamento.
+
 
 
 Observações:

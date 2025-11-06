@@ -6,3 +6,9 @@ scikit-learn
 joblib
 yfinance
 python-dotenv
+
+
+flask-pymongo
+flask-bcrypt
+flask-jwt-extended
+dnspython

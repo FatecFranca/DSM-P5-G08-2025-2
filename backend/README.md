@@ -1,4 +1,4 @@
-# 📈 Recomendador de Ações — API (README)
+# 📈 Investia — API
 
 ---
 

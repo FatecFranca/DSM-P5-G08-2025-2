@@ -4,7 +4,7 @@ import '../components/questionario_header.dart';
 import '../components/questionario_card.dart';
 import '../components/questionario_opcao.dart';
 import '../components/checkbox_opcao.dart';
-import '../components/barra_progresso.dart';
+import '../components/progress_bar.dart';
 
 class QuestionnaireScreen extends StatefulWidget {
   const QuestionnaireScreen({super.key});

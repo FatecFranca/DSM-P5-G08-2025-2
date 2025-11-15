@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/usuario.dart';
-import '../components/botao_nav.dart';
+import '../components/bottom_nav1.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/combinar_resultados.dart';
 import '../components/resultado_card.dart';
-import '../components/botao_nav.dart';
+import '../components/bottom_nav1.dart';
 
 class ResultsScreen extends StatefulWidget {
   const ResultsScreen({super.key});

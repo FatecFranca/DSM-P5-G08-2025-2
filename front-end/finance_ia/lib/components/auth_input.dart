@@ -3,12 +3,14 @@ import 'package:flutter/material.dart';
 class AuthInput extends StatelessWidget {
   final TextEditingController controller;
   final String label;
+  final String? hint;
   final bool obscure;
 
   const AuthInput({
     super.key,
     required this.controller,
     required this.label,
+    this.hint,
     this.obscure = false,
   });
 
@@ -19,8 +21,12 @@ class AuthInput extends StatelessWidget {
       obscureText: obscure,
       decoration: InputDecoration(
         labelText: label,
+        hintText: hint,
         border: const OutlineInputBorder(),
-        contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+        contentPadding: const EdgeInsets.symmetric(
+          vertical: 12,
+          horizontal: 12,
+        ),
       ),
     );
   }

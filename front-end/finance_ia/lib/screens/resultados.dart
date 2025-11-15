@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../models/combinar_resultados.dart';
 import '../components/resultado_card.dart';
 import '../components/botao_nav.dart';
@@ -26,6 +26,9 @@ class _ResultsScreenState extends State<ResultsScreen> {
     final prefs = await SharedPreferences.getInstance();
 
     final user = prefs.getString("financeIA_user");
+
+    if (!mounted) return;
+
     if (user == null) {
       Navigator.pushReplacementNamed(context, "/login");
       return;

@@ -24,7 +24,7 @@ class BotaoPersonalizado extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         elevation: 4, // Leve sombra
-        shadowColor: primaryColor.withOpacity(0.4),
+        shadowColor: primaryColor.withValues(alpha:0.4),
       ),
       child: Text(
         texto,

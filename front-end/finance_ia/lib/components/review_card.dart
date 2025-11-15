@@ -17,7 +17,7 @@ class ReviewCard extends StatelessWidget {
             Text(label,
                 style: TextStyle(
                   fontSize: 12,
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha:0.6),
                 )),
             const SizedBox(height: 4),
             Text(

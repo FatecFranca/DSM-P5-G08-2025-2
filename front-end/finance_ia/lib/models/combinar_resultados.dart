@@ -1,4 +1,4 @@
-import 'match_item.dart';
+import 'combinar_item.dart';
 
 class MatchResults {
   final String perfilId;

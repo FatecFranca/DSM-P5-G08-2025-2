@@ -35,8 +35,6 @@ class RadioOption extends StatelessWidget {
           children: [
             Radio(
               value: value,
-              groupValue: groupValue,
-              onChanged: (v) => onChanged(v as String),
             ),
             const SizedBox(width: 10),
             Expanded(

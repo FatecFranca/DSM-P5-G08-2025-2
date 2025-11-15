@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../models/match_item.dart';
+import '../models/combinar_item.dart';
 
 class ResultCard extends StatelessWidget {
   final MatchItem item;
@@ -13,10 +13,12 @@ class ResultCard extends StatelessWidget {
     required this.onTap,
   });
 
+  String formatNumber(double n) {
+    return (n * 100).toStringAsFixed(1);
+  }
+
   @override
   Widget build(BuildContext context) {
-    final NumberFormat = (double n) => (n * 100).toStringAsFixed(1);
-
     return InkWell(
       onTap: onTap,
       child: Card(
@@ -38,13 +40,20 @@ class ResultCard extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(item.ticker,
-                              style: const TextStyle(
-                                  fontSize: 18, fontWeight: FontWeight.bold)),
-                          Text(item.pais,
-                              style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey.shade600)),
+                          Text(
+                            item.ticker,
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Text(
+                            item.pais,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: Colors.grey.shade600,
+                            ),
+                          ),
                         ],
                       ),
                     ],
@@ -55,30 +64,36 @@ class ResultCard extends StatelessWidget {
                       Text(
                         "${(item.probMatch * 100).toStringAsFixed(0)}%",
                         style: const TextStyle(
-                            fontSize: 26,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.green),
+                          fontSize: 26,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.green,
+                        ),
                       ),
                       const Text(
                         "compatibilidade",
                         style: TextStyle(fontSize: 10, color: Colors.grey),
                       )
                     ],
-                  )
+                  ),
                 ],
               ),
               const SizedBox(height: 8),
-              Divider(),
+              const Divider(),
               const SizedBox(height: 6),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  _metric("Ret. 3m", NumberFormat(item.ret3m),
-                      item.ret3m >= 0 ? Colors.green : Colors.red),
-                  _metric("Ret. 6m", NumberFormat(item.ret6m),
-                      item.ret6m >= 0 ? Colors.green : Colors.red),
-                  _metric("Volatilidade",
-                      NumberFormat(item.vol63), Colors.black),
+                  _metric(
+                    "Ret. 3m",
+                    formatNumber(item.ret3m),
+                    item.ret3m >= 0 ? Colors.green : Colors.red,
+                  ),
+                  _metric(
+                    "Ret. 6m",
+                    formatNumber(item.ret6m),
+                    item.ret6m >= 0 ? Colors.green : Colors.red,
+                  ),
+                  _metric("Volatilidade", formatNumber(item.vol63), Colors.black),
                 ],
               ),
             ],
@@ -92,11 +107,14 @@ class ResultCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label,
-            style: const TextStyle(fontSize: 11, color: Colors.grey)),
+        Text(label, style: const TextStyle(fontSize: 11, color: Colors.grey)),
         Text(
           "$value%",
-          style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: color),
+          style: TextStyle(
+            fontSize: 14,
+            fontWeight: FontWeight.bold,
+            color: color,
+          ),
         ),
       ],
     );

@@ -25,6 +25,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final prefs = await SharedPreferences.getInstance();
 
     final userData = prefs.getString("financeIA_user");
+
+    if (!mounted) return;
     if (userData == null) {
       Navigator.pushReplacementNamed(context, "/login");
       return;
@@ -43,9 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     if (user == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     final firstName = user!.name.split(" ").first;
@@ -64,13 +64,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   Text(
                     "Olá, $firstName!",
                     style: const TextStyle(
-                        fontSize: 26, fontWeight: FontWeight.bold),
+                      fontSize: 26,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     "Bem-vindo ao seu assistente financeiro",
-                    style:
-                        TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
                   ),
                 ],
               ),
@@ -88,9 +89,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Text(
                   "Como funciona",
                   style: TextStyle(
-                      fontSize: 13,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.grey.shade600),
+                    fontSize: 13,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey.shade600,
+                  ),
                 ),
               ),
               const SizedBox(height: 10),
@@ -130,7 +132,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         child: Text(
                           "Aviso: Investimentos em ações envolvem riscos. As recomendações são baseadas em análise algorítmica e não garantem retorno. Consulte um profissional certificado.",
                           style: TextStyle(
-                              fontSize: 12, color: Colors.grey, height: 1.4),
+                            fontSize: 12,
+                            color: Colors.grey,
+                            height: 1.4,
+                          ),
                         ),
                       ),
                     ),
@@ -166,9 +171,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Configure seu perfil",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Configure seu perfil",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 6),
                   const Text(
                     "Responda algumas perguntas para receber recomendações personalizadas de investimentos.",
@@ -186,10 +192,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Icon(Icons.arrow_right_alt, size: 18),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -214,9 +220,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text("Ver recomendações",
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Ver recomendações",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   const SizedBox(height: 6),
                   const Text(
                     "Veja as ações mais compatíveis com seu perfil de investidor.",
@@ -227,8 +234,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                     ),
-                    onPressed: () =>
-                        Navigator.pushNamed(context, "/results"),
+                    onPressed: () => Navigator.pushNamed(context, "/results"),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -237,10 +243,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         Icon(Icons.arrow_right_alt, size: 18),
                       ],
                     ),
-                  )
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),
@@ -261,11 +267,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: color.withOpacity(0.15),
+              backgroundColor: color.withValues(alpha: 0.15),
               child: Text(
                 number,
                 style: TextStyle(
-                    color: color, fontSize: 18, fontWeight: FontWeight.bold),
+                  color: color,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
               ),
             ),
             const SizedBox(width: 14),
@@ -273,17 +282,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title,
-                      style: const TextStyle(
-                          fontSize: 16, fontWeight: FontWeight.w600)),
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     text,
                     style: const TextStyle(fontSize: 13, color: Colors.grey),
-                  )
+                  ),
                 ],
               ),
-            )
+            ),
           ],
         ),
       ),

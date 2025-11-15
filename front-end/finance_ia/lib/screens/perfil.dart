@@ -29,6 +29,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
     final prefs = await SharedPreferences.getInstance();
 
     final userData = prefs.getString("financeIA_user");
+
+    if (!mounted) return;
     if (userData == null) {
       Navigator.pushReplacementNamed(context, "/login");
       return;
@@ -49,6 +51,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await prefs.remove("financeIA_user");
     await prefs.remove("financeIA_profile");
 
+    if (!mounted) return;
     Navigator.pushReplacementNamed(context, "/login");
   }
 
@@ -57,23 +60,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
       "objetivo": {
         "crescer aos poucos": "Crescer aos poucos",
         "equilibrio": "Equilíbrio",
-        "crescer mais rapido": "Crescer mais rápido"
+        "crescer mais rapido": "Crescer mais rápido",
       },
       "horizonte": {
         "curto": "Curto prazo (até 2 anos)",
         "medio": "Médio prazo (2-5 anos)",
-        "longo": "Longo prazo (5+ anos)"
+        "longo": "Longo prazo (5+ anos)",
       },
       "conforto_oscilacao": {
         "baixo": "Baixo conforto",
         "medio": "Conforto médio",
-        "alto": "Alto conforto"
+        "alto": "Alto conforto",
       },
-      "pais": {
-        "any": "Qualquer país",
-        "BR": "Brasil",
-        "US": "Estados Unidos"
-      }
+      "pais": {"any": "Qualquer país", "BR": "Brasil", "US": "Estados Unidos"},
     };
 
     return labels[key]?[value] ?? value;
@@ -82,9 +81,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     if (loading) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -94,8 +91,10 @@ class _ProfileScreenState extends State<ProfileScreen> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text("Perfil",
-                style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold)),
+            const Text(
+              "Perfil",
+              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
+            ),
             const SizedBox(height: 24),
 
             // USER CARD
@@ -108,21 +107,30 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     CircleAvatar(
                       radius: 30,
                       backgroundColor: Colors.blue.shade50,
-                      child: const Icon(Icons.person,
-                          size: 36, color: Colors.blue),
+                      child: const Icon(
+                        Icons.person,
+                        size: 36,
+                        color: Colors.blue,
+                      ),
                     ),
                     const SizedBox(width: 18),
                     Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(user!.name,
-                              style: const TextStyle(
-                                  fontSize: 20, fontWeight: FontWeight.bold)),
+                          Text(
+                            user!.nome,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                           Text(
                             user!.email,
                             style: TextStyle(
-                                fontSize: 14, color: Colors.grey.shade600),
+                              fontSize: 14,
+                              color: Colors.grey.shade600,
+                            ),
                           ),
                         ],
                       ),
@@ -144,13 +152,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           const Text(
                             "Perfil de Investimento",
                             style: TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w600),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w600,
+                            ),
                           ),
                           TextButton(
                             onPressed: () =>
                                 Navigator.pushNamed(context, "/questionnaire"),
                             child: const Text("Editar"),
-                          )
+                          ),
                         ],
                       ),
 
@@ -161,43 +171,52 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           child: Column(
                             children: [
                               InfoCard(
-                                  label: "Objetivo principal",
-                                  value: getLabel(
-                                      "objetivo", profile!.objetivo)),
+                                label: "Objetivo principal",
+                                value: getLabel("objetivo", profile!.objetivo),
+                              ),
                               InfoCard(
-                                  label: "Horizonte de investimento",
-                                  value: getLabel(
-                                      "horizonte", profile!.horizonte)),
+                                label: "Horizonte de investimento",
+                                value: getLabel(
+                                  "horizonte",
+                                  profile!.horizonte,
+                                ),
+                              ),
                               InfoCard(
-                                  label: "Conforto com oscilações",
-                                  value: getLabel("conforto_oscilacao",
-                                      profile!.confortoOscilacao)),
+                                label: "Conforto com oscilações",
+                                value: getLabel(
+                                  "conforto_oscilacao",
+                                  profile!.confortoOscilacao,
+                                ),
+                              ),
                               InfoCard(
-                                  label: "Aporte mensal",
-                                  value: profile!.aporteMensal > 0
-                                      ? "R\$ ${profile!.aporteMensal.toStringAsFixed(2)}"
-                                      : "Não definido"),
+                                label: "Aporte mensal",
+                                value: profile!.aporteMensal > 0
+                                    ? "R\$ ${profile!.aporteMensal.toStringAsFixed(2)}"
+                                    : "Não definido",
+                              ),
                               InfoCard(
-                                  label: "Preferência de país",
-                                  value:
-                                      getLabel("pais", profile!.pais)),
+                                label: "Preferência de país",
+                                value: getLabel("pais", profile!.pais),
+                              ),
 
                               if (profile!.setores.isNotEmpty)
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     const SizedBox(height: 6),
-                                    const Text("Setores de interesse",
-                                        style: TextStyle(
-                                            fontSize: 13,
-                                            color: Colors.grey)),
+                                    const Text(
+                                      "Setores de interesse",
+                                      style: TextStyle(
+                                        fontSize: 13,
+                                        color: Colors.grey,
+                                      ),
+                                    ),
                                     const SizedBox(height: 8),
                                     Wrap(
                                       spacing: 8,
                                       runSpacing: 8,
                                       children: profile!.setores
-                                          .map((s) =>
-                                              SectorBadge(text: s))
+                                          .map((s) => SectorBadge(text: s))
                                           .toList(),
                                     ),
                                   ],
@@ -205,7 +224,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ],
                           ),
                         ),
-                      )
+                      ),
                     ],
                   )
                 : Center(
@@ -215,13 +234,19 @@ class _ProfileScreenState extends State<ProfileScreen> {
                         padding: const EdgeInsets.all(20),
                         child: Column(
                           children: [
-                            const Icon(Icons.trending_up,
-                                size: 46, color: Colors.grey),
+                            const Icon(
+                              Icons.trending_up,
+                              size: 46,
+                              color: Colors.grey,
+                            ),
                             const SizedBox(height: 10),
-                            const Text("Perfil não configurado",
-                                style: TextStyle(
-                                    fontSize: 16, 
-                                    fontWeight: FontWeight.w600)),
+                            const Text(
+                              "Perfil não configurado",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                             const SizedBox(height: 8),
                             const Text(
                               "Complete o questionário para recomendações personalizadas.",
@@ -229,10 +254,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 14),
                             ElevatedButton(
-                              onPressed: () =>
-                                  Navigator.pushNamed(context, "/questionnaire"),
+                              onPressed: () => Navigator.pushNamed(
+                                context,
+                                "/questionnaire",
+                              ),
                               child: const Text("Configurar perfil"),
-                            )
+                            ),
                           ],
                         ),
                       ),

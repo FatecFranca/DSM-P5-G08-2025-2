@@ -15,10 +15,9 @@ class AppTheme {
       onSecondary: Color(0xFF262626),
       error: Color(0xFFB71C1C),
       onError: Colors.white,
-      background: Color(0xFFFFFFFF),
-      onBackground: Color(0xFF262626),
-      surface: Color(0xFFFFFFFF),
+      surface: Color(0xFFFFFFFF), // ✅ substitui background
       onSurface: Color(0xFF262626),
+      surfaceContainerHighest: Color(0xFFF2F2F2), // ✅ cor alternativa clara
     ),
     scaffoldBackgroundColor: const Color(0xFFFFFFFF),
     appBarTheme: const AppBarTheme(
@@ -58,10 +57,9 @@ class AppTheme {
       onSecondary: Colors.white,
       error: Color(0xFFEF5350),
       onError: Colors.white,
-      background: Color(0xFF121212),
-      onBackground: Colors.white,
-      surface: Color(0xFF1E1E1E),
+      surface: Color(0xFF1E1E1E), // ✅ substitui background
       onSurface: Colors.white,
+      surfaceContainerHighest: Color(0xFF2C2C2C), // ✅ mais escuro para contraste
     ),
     scaffoldBackgroundColor: const Color(0xFF121212),
     appBarTheme: const AppBarTheme(

@@ -19,7 +19,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
 
   QuestionnaireData data = QuestionnaireData();
 
-  static const SETORES = [
+  static const setores = [
     "Tecnologia",
     "Financeiro",
     "Energia",
@@ -262,7 +262,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
                   child: ListView(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
-                    children: SETORES
+                    children: setores
                         .map(
                           (s) => CheckboxOption(
                             label: s,

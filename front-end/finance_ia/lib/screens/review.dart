@@ -19,7 +19,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
   bool loading = false;
   String error = "";
 
-  static const LABELS = {
+  static const labels = {
     "objetivo": {
       "crescer aos poucos": "Crescer aos poucos",
       "equilibrio": "Equilíbrio",
@@ -51,6 +51,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
   Future<void> loadStoredData() async {
     final prefs = await SharedPreferences.getInstance();
     final jsonStr = prefs.getString("financeIA_profile");
+
+    if (!mounted) return;
 
     if (jsonStr == null) {
       Navigator.pushReplacementNamed(context, "/questionnaire");
@@ -101,6 +103,8 @@ class _ReviewScreenState extends State<ReviewScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString("financeIA_results", response.body);
 
+      if (!mounted) return;
+
       Navigator.pushNamed(context, "/results");
     } catch (e) {
       setState(() => error = e.toString());
@@ -130,17 +134,17 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
               ReviewCard(
                 label: "Objetivo principal",
-                value: LABELS["objetivo"]![data!.objetivo] ?? "",
+                value: labels["objetivo"]![data!.objetivo] ?? "",
               ),
 
               ReviewCard(
                 label: "Horizonte de investimento",
-                value: LABELS["horizonte"]![data!.horizonte] ?? "",
+                value: labels["horizonte"]![data!.horizonte] ?? "",
               ),
 
               ReviewCard(
                 label: "Conforto com oscilações",
-                value: LABELS["conforto"]![data!.confortoOscilacao] ?? "",
+                value: labels["conforto"]![data!.confortoOscilacao] ?? "",
               ),
 
               ReviewCard(
@@ -152,7 +156,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
               ReviewCard(
                 label: "Preferência de país",
-                value: LABELS["pais"]![data!.pais] ?? "",
+                value: labels["pais"]![data!.pais] ?? "",
               ),
 
               ReviewCard(
@@ -165,7 +169,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               const SizedBox(height: 20),
 
               Card(
-                color: Theme.of(context).colorScheme.surfaceVariant,
+                color: Theme.of(context).colorScheme.surfaceContainer,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Text(
@@ -174,7 +178,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       color: Theme.of(context)
                           .colorScheme
                           .onSurface
-                          .withOpacity(0.7),
+                          .withValues(alpha:0.7),
                       fontSize: 12,
                     ),
                   ),

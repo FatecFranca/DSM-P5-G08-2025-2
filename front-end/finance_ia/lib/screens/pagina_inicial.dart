@@ -114,7 +114,6 @@ class PaginaInicial extends StatelessWidget {
               ),
             ),
 
-            // ✅ Seção de Funcionalidades (atualizada e responsiva)
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               child: Column(
@@ -175,10 +174,10 @@ class PaginaInicial extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.corPrincipal.withOpacity(0.05),
+                color: AppTheme.corPrincipal.withValues(alpha:0.05),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppTheme.corPrincipal.withOpacity(0.3),
+                  color: AppTheme.corPrincipal.withValues(alpha:0.3),
                 ),
               ),
               child: Column(

@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import '../models/trend_model.dart';
 import '../components/detail_info_card.dart';
 import '../components/back_button_header.dart';
-import '../components/detail_badge.dart';
+
 
 class DetailScreen extends StatefulWidget {
   final String ticker;

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'screens/pagina_inicial.dart';
 import 'screens/login.dart';
-import 'screens/cadastroUsuario.dart';
+import 'screens/cadastro_usuario.dart';
 import 'screens/questionario.dart';
 import 'screens/dashboard.dart';
 import 'screens/review.dart';
@@ -35,26 +35,46 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       title: 'FinanceIA',
       debugShowCheckedModeBanner: false,
-
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: modoEscuro ? ThemeMode.dark : ThemeMode.light,
 
-      // ROTAS 
-      routes: {
-        '/': (context) => PaginaInicial(alternarTema: alternarTema),
-        '/login': (context) => const LoginScreen(),
-        '/cadastroUsuario': (context) => const CadastroScreen(),
-        '/questionario': (context) => const QuestionnaireScreen(),
-        '/review': (context) => const ReviewScreen(),
-        '/resultados': (context) => const ResultsScreen(),
-        '/dashboard': (context) => const DashboardScreen(),
-        '/perfil': (context) => const ProfileScreen(),
-        '/detalhes': (context) => const DetailScreen(),
-
+      //
+      // ✅ GERENCIAMENTO DE ROTAS COM ARGUMENTOS
+      //
+      onGenerateRoute: (settings) {
+        switch (settings.name) {
+          case '/':
+            return MaterialPageRoute(
+              builder: (context) => PaginaInicial(alternarTema: alternarTema),
+            );
+          case '/login':
+            return MaterialPageRoute(builder: (context) => const LoginScreen());
+          case '/cadastroUsuario':
+            return MaterialPageRoute(builder: (context) => const CadastroScreen());
+          case '/questionario':
+            return MaterialPageRoute(builder: (context) => const QuestionnaireScreen());
+          case '/review':
+            return MaterialPageRoute(builder: (context) => const ReviewScreen());
+          case '/resultados':
+            return MaterialPageRoute(builder: (context) => const ResultsScreen());
+          case '/dashboard':
+            return MaterialPageRoute(builder: (context) => const DashboardScreen());
+          case '/perfil':
+            return MaterialPageRoute(builder: (context) => const ProfileScreen());
+          case '/detalhes':
+            final ticker = settings.arguments as String; // 👈 recebe o argumento
+            return MaterialPageRoute(
+              builder: (context) => DetailScreen(ticker: ticker),
+            );
+          default:
+            return MaterialPageRoute(
+              builder: (context) => PaginaInicial(alternarTema: alternarTema),
+            );
+        }
       },
 
-      initialRoute: '/',
+      initialRoute: '/cadastro_usuario',
     );
   }
 }

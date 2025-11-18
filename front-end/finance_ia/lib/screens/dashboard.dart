@@ -2,7 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../models/usuario.dart';
-import '../components/bottom_nav1.dart';
+import '../components/bottom_nav.dart';
+import '../services/auth_service.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -23,23 +24,39 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-
     final userData = prefs.getString("financeIA_user");
 
     if (!mounted) return;
+
     if (userData == null) {
       Navigator.pushReplacementNamed(context, "/login");
       return;
     }
 
-    setState(() {
-      user = User.fromMap(jsonDecode(userData));
-    });
+    try {
+      final userMap = jsonDecode(userData);
+      setState(() {
+        user = User(
+          email: userMap['email'] ?? '',
+          name: userMap['name'] ?? 'Usuário',
+        );
+      });
 
-    final profile = prefs.getString("financeIA_profile");
-    setState(() {
-      hasProfile = profile != null;
-    });
+      final profile = prefs.getString("financeIA_profile");
+      setState(() {
+        hasProfile = profile != null;
+      });
+    } catch (e) {
+      // Se houver erro ao carregar dados, redirecionar para login
+      Navigator.pushReplacementNamed(context, "/login");
+    }
+  }
+
+  Future<void> _logout() async {
+    await AuthService.logout();
+    if (mounted) {
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
   }
 
   @override
@@ -48,9 +65,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
-    final firstName = user!.name.split(" ").first;
+    final firstName = user!.name?.split(" ").first ?? "Usuário";
 
     return Scaffold(
+      appBar: AppBar(
+        title: const Text('Dashboard'),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () async {
+              await _logout();
+            },
+            tooltip: 'Sair',
+          ),
+        ],
+      ),
       bottomNavigationBar: const BottomNav(active: "home"),
       body: SafeArea(
         child: Container(
@@ -183,7 +213,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: () =>
-                        Navigator.pushNamed(context, "/questionnaire"),
+                        Navigator.pushNamed(context, "/questionario"),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -234,7 +264,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.green,
                     ),
-                    onPressed: () => Navigator.pushNamed(context, "/results"),
+                    onPressed: () =>
+                        Navigator.pushNamed(context, "/resultados"),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [

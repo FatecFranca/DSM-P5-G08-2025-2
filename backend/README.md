@@ -126,6 +126,7 @@ Registra um novo usuário.
 * **Body (JSON):**
     ```json
     {
+      "name": "Nome do Usuário",
       "email": "usuario@email.com",
       "password": "senha_min_6_chars"
     }
@@ -138,7 +139,7 @@ Registra um novo usuário.
     }
     ```
 * **Erros Comuns:**
-    * `400`: Dados faltando ou inválidos (ex: senha curta).
+    * `400`: Dados faltando ou inválidos (ex: nome muito curto, senha curta).
     * `409`: Email já cadastrado.
 
 #### `POST /auth/login`
@@ -296,7 +297,7 @@ Fluxo para testar a API.
 
 #### 1. Registrar um novo usuário
 ```bash
-curl -Uri "http://localhost:8000/auth/register" -Method POST -ContentType "application/json" -Body '{"email":"teste@email.com", "password":"minhasenha123"}'
+curl -Uri "http://localhost:8000/auth/register" -Method POST -ContentType "application/json" -Body '{"name":"Usuário Teste", "email":"teste@email.com", "password":"minhasenha123"}'
 ```
 #### 2. Fazer login para pegar o token
 

@@ -8,17 +8,28 @@ class BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: active == "profile" ? 2 : 0,
+      currentIndex: active == "profile" ? 2 : (active == "explore" ? 1 : 0),
       onTap: (i) {
-        // implementação depende das rotas usadas
+        switch (i) {
+          case 0:
+            Navigator.pushReplacementNamed(context, "/dashboard");
+            break;
+          case 1:
+            Navigator.pushReplacementNamed(context, "/explorar");
+            break;
+          case 2:
+            Navigator.pushReplacementNamed(context, "/perfil");
+            break;
+        }
       },
+      type: BottomNavigationBarType.fixed,
       items: const [
         BottomNavigationBarItem(
           icon: Icon(Icons.show_chart),
           label: 'Home',
         ),
         BottomNavigationBarItem(
-          icon: Icon(Icons.list),
+          icon: Icon(Icons.explore),
           label: 'Explorar',
         ),
         BottomNavigationBarItem(

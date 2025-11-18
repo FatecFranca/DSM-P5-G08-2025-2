@@ -33,15 +33,24 @@ class RadioOption extends StatelessWidget {
         ),
         child: Row(
           children: [
-            Radio(
+            Radio<String>(
               value: value,
+              groupValue: groupValue,
+              onChanged: (String? newValue) {
+                if (newValue != null) {
+                  onChanged(newValue);
+                }
+              },
             ),
             const SizedBox(width: 10),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.bold)),
+                  Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
                   Text(subtitle, style: TextStyle(color: Colors.grey.shade600)),
                 ],
               ),

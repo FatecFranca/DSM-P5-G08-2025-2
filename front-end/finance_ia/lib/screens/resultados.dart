@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import '../models/combinar_resultados.dart';
-import '../components/resultado_card.dart';
-import '../components/bottom_nav1.dart';
+import '../models/recommendation.dart';
+import '../components/bottom_nav.dart';
+import '../services/auth_service.dart';
 
 class ResultsScreen extends StatefulWidget {
   const ResultsScreen({super.key});
@@ -13,8 +13,10 @@ class ResultsScreen extends StatefulWidget {
 }
 
 class _ResultsScreenState extends State<ResultsScreen> {
-  MatchResults? results;
+  List<Recommendation> recommendations = [];
+  Map<String, dynamic> profileMatch = {};
   bool loading = true;
+  String? error;
 
   @override
   void initState() {
@@ -23,39 +25,89 @@ class _ResultsScreenState extends State<ResultsScreen> {
   }
 
   Future<void> loadResults() async {
-    final prefs = await SharedPreferences.getInstance();
+    try {
+      // Check if user is authenticated
+      final isAuthenticated = await AuthService.isAuthenticated();
+      if (!isAuthenticated) {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, "/login");
+        }
+        return;
+      }
 
-    final user = prefs.getString("financeIA_user");
+      // Get results from SharedPreferences (saved by review screen)
+      final prefs = await SharedPreferences.getInstance();
+      final resultsJson = prefs.getString("financeIA_results");
 
-    if (!mounted) return;
+      if (resultsJson == null) {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, "/questionario");
+        }
+        return;
+      }
 
-    if (user == null) {
-      Navigator.pushReplacementNamed(context, "/login");
-      return;
-    }
+      final data = json.decode(resultsJson) as Map<String, dynamic>;
 
-    final res = prefs.getString("financeIA_results");
-
-    if (res != null) {
-      setState(() {
-        results = MatchResults.fromMap(jsonDecode(res));
-        loading = false;
-      });
-    } else {
-      final profile = prefs.getString("financeIA_profile");
-      if (profile == null) {
-        Navigator.pushReplacementNamed(context, "/questionnaire");
-      } else {
-        Navigator.pushReplacementNamed(context, "/review");
+      if (mounted) {
+        setState(() {
+          recommendations = (data['items'] as List)
+              .map((item) => Recommendation.fromMap(item))
+              .toList();
+          profileMatch = {
+            'perfil_id': data['perfil_id'],
+            'perfil_tipo': data['perfil_tipo'],
+          };
+          loading = false;
+        });
+      }
+    } catch (e) {
+      if (mounted) {
+        setState(() {
+          error = 'Erro de conexão: $e';
+          loading = false;
+        });
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (loading || results == null) {
+    if (loading) {
+      return Scaffold(body: Center(child: CircularProgressIndicator()));
+    }
+
+    if (error != null) {
       return Scaffold(
-        body: Center(child: CircularProgressIndicator()),
+        body: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.error_outline, size: 64, color: Colors.red),
+              SizedBox(height: 16),
+              Text(
+                'Erro ao carregar recomendações',
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Text(
+                error!,
+                textAlign: TextAlign.center,
+                style: TextStyle(color: Colors.grey[600]),
+              ),
+              SizedBox(height: 24),
+              ElevatedButton(
+                onPressed: () {
+                  setState(() {
+                    loading = true;
+                    error = null;
+                  });
+                  loadResults();
+                },
+                child: Text('Tentar Novamente'),
+              ),
+            ],
+          ),
+        ),
       );
     }
 
@@ -71,11 +123,14 @@ class _ResultsScreenState extends State<ResultsScreen> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.pushReplacementNamed(context, "/dashboard"),
+                    onPressed: () =>
+                        Navigator.pushReplacementNamed(context, "/dashboard"),
                   ),
                   const Spacer(),
-                  const Text("Recomendações",
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  const Text(
+                    "Recomendações",
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                   const Spacer(),
                   const SizedBox(width: 40),
                 ],
@@ -92,22 +147,28 @@ class _ResultsScreenState extends State<ResultsScreen> {
                       CircleAvatar(
                         radius: 22,
                         backgroundColor: Colors.blue.shade100,
-                        child: const Icon(Icons.trending_up, color: Colors.blue),
+                        child: const Icon(
+                          Icons.trending_up,
+                          color: Colors.blue,
+                        ),
                       ),
                       const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text("Seu perfil",
-                              style: TextStyle(
-                                  fontSize: 12, color: Colors.grey)),
+                          const Text(
+                            "Seu perfil",
+                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                          ),
                           Text(
-                            results!.perfilTipo,
+                            profileMatch['tipo'] ?? 'Investidor',
                             style: const TextStyle(
-                                fontSize: 16, fontWeight: FontWeight.bold),
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ],
-                      )
+                      ),
                     ],
                   ),
                 ),
@@ -119,23 +180,67 @@ class _ResultsScreenState extends State<ResultsScreen> {
                 child: ListView(
                   children: [
                     Text(
-                      "Top ${results!.items.length} ações para você",
+                      "Top ${recommendations.length} recomendações para você",
                       style: TextStyle(
-                          fontSize: 12, color: Colors.grey.shade700),
+                        fontSize: 12,
+                        color: Colors.grey.shade700,
+                      ),
                     ),
                     const SizedBox(height: 8),
 
-                    ...results!.items.asMap().entries.map(
-                      (e) => ResultCard(
-                        item: e.value,
-                        index: e.key,
-                        onTap: () {
-                          Navigator.pushNamed(
-                            context,
-                            "/detail",
-                            arguments: e.value.ticker,
-                          );
-                        },
+                    ...recommendations.asMap().entries.map(
+                      (e) => Card(
+                        margin: EdgeInsets.only(bottom: 8),
+                        child: ListTile(
+                          leading: CircleAvatar(
+                            backgroundColor: Colors.green.shade100,
+                            child: Text(
+                              '${e.key + 1}',
+                              style: TextStyle(
+                                color: Colors.green.shade700,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                          title: Text(
+                            e.value.ticker,
+                            style: TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          subtitle: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(e.value.name),
+                              Text(
+                                '${e.value.setor} • ${e.value.pais}',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
+                              ),
+                            ],
+                          ),
+                          trailing: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(Icons.trending_up, color: Colors.green),
+                              Text(
+                                '${(e.value.score * 100).toStringAsFixed(1)}%',
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.green,
+                                ),
+                              ),
+                            ],
+                          ),
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              "/detalhes",
+                              arguments: e.value.ticker,
+                            );
+                          },
+                        ),
                       ),
                     ),
                     const SizedBox(height: 20),
@@ -148,7 +253,10 @@ class _ResultsScreenState extends State<ResultsScreen> {
                         child: Text(
                           "Importante: As probabilidades indicam compatibilidade com seu perfil, não garantia de retorno. Rentabilidade passada não garante resultados futuros.",
                           style: TextStyle(
-                              fontSize: 12, color: Colors.grey, height: 1.4),
+                            fontSize: 12,
+                            color: Colors.grey,
+                            height: 1.4,
+                          ),
                         ),
                       ),
                     ),

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../components/auth_input.dart';
 import '../components/logo_header.dart';
 import '../components/primary_button.dart';
+import '../services/auth_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -14,7 +15,9 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController senhaController = TextEditingController();
 
-  void handleLogin() {
+  bool isLoading = false;
+
+  void handleLogin() async {
     final email = emailController.text.trim();
     final senha = senhaController.text.trim();
 
@@ -25,11 +28,50 @@ class _LoginScreenState extends State<LoginScreen> {
       return;
     }
 
-    // Aqui você pode implementar autenticação real ou salvar no SharedPreferences
-    debugPrint("Login com: $email | $senha");
+    setState(() {
+      isLoading = true;
+    });
 
-    // Navegar para o dashboard
-    Navigator.pushNamed(context, '/dashboard');
+    try {
+      final result = await AuthService.login(email: email, password: senha);
+
+      if (result['success']) {
+        if (mounted) {
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text("Login realizado com sucesso!"),
+              backgroundColor: Colors.green,
+            ),
+          );
+
+          // Navigate to dashboard and clear the entire stack
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            '/dashboard',
+            (route) => false,
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text(result['error'])));
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text("Erro: $e")));
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          isLoading = false;
+        });
+      }
+    }
   }
 
   @override
@@ -38,10 +80,7 @@ class _LoginScreenState extends State<LoginScreen> {
       body: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            colors: [
-              Color(0xFFFFFFFF),
-              Color(0xFFE6EEF1),
-            ],
+            colors: [Color(0xFFFFFFFF), Color(0xFFE6EEF1)],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -118,11 +157,46 @@ class _LoginScreenState extends State<LoginScreen> {
 
                           // BOTÃO ENTRAR
                           PrimaryButton(
-                            label: "Entrar",
-                            onPressed: handleLogin,
+                            label: isLoading ? "Entrando..." : "Entrar",
+                            onPressed: isLoading ? () {} : handleLogin,
                           ),
 
                           const SizedBox(height: 24),
+
+                          // Link para Cadastro
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Text(
+                                "Não tem uma conta? ",
+                                style: TextStyle(
+                                  color: Color(0xFF6B7280),
+                                  fontSize: 14,
+                                ),
+                              ),
+                              GestureDetector(
+                                onTap: isLoading
+                                    ? null
+                                    : () {
+                                        Navigator.pushNamed(
+                                          context,
+                                          '/cadastroUsuario',
+                                        );
+                                      },
+                                child: const Text(
+                                  "Criar Conta",
+                                  style: TextStyle(
+                                    color: Color(0xFF2C5F41),
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w600,
+                                    decoration: TextDecoration.underline,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+
+                          const SizedBox(height: 16),
 
                           Text(
                             "Ao entrar, você concorda com nossos termos de uso e política de privacidade",

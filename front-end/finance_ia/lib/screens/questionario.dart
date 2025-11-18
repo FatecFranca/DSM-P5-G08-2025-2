@@ -5,6 +5,7 @@ import '../components/questionario_card.dart';
 import '../components/questionario_opcao.dart';
 import '../components/checkbox_opcao.dart';
 import '../components/progress_bar.dart';
+import '../services/profile_service.dart';
 
 class QuestionnaireScreen extends StatefulWidget {
   const QuestionnaireScreen({super.key});
@@ -30,11 +31,49 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
     "Materiais",
   ];
 
-  void next() {
+  void next() async {
     if (step < totalSteps) {
       setState(() => step++);
     } else {
-      Navigator.pushNamed(context, "/review");
+      // Save profile to backend
+      await saveProfile();
+    }
+  }
+
+  Future<void> saveProfile() async {
+    try {
+      final result = await ProfileService.saveProfile(data);
+
+      if (result['success']) {
+        if (mounted) {
+          // Navigate to dashboard preserving authentication context
+          Navigator.pushNamedAndRemoveUntil(
+            context,
+            "/dashboard",
+            (route) => false,
+          );
+
+          // Show success message
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('Perfil salvo com sucesso!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+        }
+      } else {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(result['error'] ?? 'Erro ao salvar perfil')),
+          );
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Erro: $e')));
+      }
     }
   }
 
@@ -42,7 +81,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
     if (step > 1) {
       setState(() => step--);
     } else {
-      Navigator.pushNamed(context, "/dashboard");
+      Navigator.pop(context);
     }
   }
 

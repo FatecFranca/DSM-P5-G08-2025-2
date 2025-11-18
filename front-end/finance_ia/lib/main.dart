@@ -4,11 +4,12 @@ import 'screens/login.dart';
 import 'screens/cadastro_usuario.dart';
 import 'screens/questionario.dart';
 import 'screens/dashboard.dart';
-import 'screens/review.dart';
+import 'screens/explorar.dart';
 import 'screens/resultados.dart';
 import 'screens/perfil.dart';
 import 'screens/detalhes.dart';
 import 'theme/app_theme.dart';
+import 'services/auth_service.dart';
 
 void main() {
   runApp(const MyApp());
@@ -23,6 +24,20 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   bool modoEscuro = false;
+  String? initialRoute;
+
+  @override
+  void initState() {
+    super.initState();
+    _checkAuthStatus();
+  }
+
+  void _checkAuthStatus() async {
+    final isAuthenticated = await AuthService.isAuthenticated();
+    setState(() {
+      initialRoute = isAuthenticated ? '/dashboard' : '/';
+    });
+  }
 
   void alternarTema() {
     setState(() {
@@ -51,19 +66,33 @@ class _MyAppState extends State<MyApp> {
           case '/login':
             return MaterialPageRoute(builder: (context) => const LoginScreen());
           case '/cadastroUsuario':
-            return MaterialPageRoute(builder: (context) => const CadastroScreen());
+            return MaterialPageRoute(
+              builder: (context) => const CadastroScreen(),
+            );
           case '/questionario':
-            return MaterialPageRoute(builder: (context) => const QuestionnaireScreen());
-          case '/review':
-            return MaterialPageRoute(builder: (context) => const ReviewScreen());
+            return MaterialPageRoute(
+              builder: (context) => const QuestionnaireScreen(),
+            );
+
           case '/resultados':
-            return MaterialPageRoute(builder: (context) => const ResultsScreen());
+            return MaterialPageRoute(
+              builder: (context) => const ResultsScreen(),
+            );
           case '/dashboard':
-            return MaterialPageRoute(builder: (context) => const DashboardScreen());
+            return MaterialPageRoute(
+              builder: (context) => const DashboardScreen(),
+            );
+          case '/explorar':
+            return MaterialPageRoute(
+              builder: (context) => const ExploreScreen(),
+            );
           case '/perfil':
-            return MaterialPageRoute(builder: (context) => const ProfileScreen());
+            return MaterialPageRoute(
+              builder: (context) => const ProfileScreen(),
+            );
           case '/detalhes':
-            final ticker = settings.arguments as String; // 👈 recebe o argumento
+            final ticker =
+                settings.arguments as String; // 👈 recebe o argumento
             return MaterialPageRoute(
               builder: (context) => DetailScreen(ticker: ticker),
             );
@@ -74,7 +103,7 @@ class _MyAppState extends State<MyApp> {
         }
       },
 
-      initialRoute: '/cadastro_usuario',
+      initialRoute: initialRoute ?? '/',
     );
   }
 }

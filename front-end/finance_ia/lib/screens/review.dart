@@ -3,9 +3,11 @@ import 'package:flutter/material.dart';
 import '../models/questionario_dados.dart';
 import '../components/review_card.dart';
 import '../components/review_header.dart';
-import 'package:uuid/uuid.dart';
+
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import '../services/api_config.dart';
+import '../services/token_service.dart';
 
 class ReviewScreen extends StatefulWidget {
   const ReviewScreen({super.key});
@@ -35,11 +37,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
       "medio": "Conforto médio",
       "alto": "Alto conforto",
     },
-    "pais": {
-      "any": "Qualquer país",
-      "BR": "Brasil",
-      "US": "Estados Unidos",
-    }
+    "pais": {"any": "Qualquer país", "BR": "Brasil", "US": "Estados Unidos"},
   };
 
   @override
@@ -72,52 +70,49 @@ class _ReviewScreenState extends State<ReviewScreen> {
       error = "";
     });
 
-    final uuid = const Uuid().v4();
-
-    final payload = {
-      "perfil_id": uuid,
-      "perfil": {
-        "objetivo": data!.objetivo,
-        "conforto_oscilacao": data!.confortoOscilacao,
-        "horizonte": data!.horizonte,
-        "aporte_mensal": data!.aporteMensal,
-        "preferencias": {
-          "pais": data!.pais,
-          "setores": data!.setores,
-        }
-      },
-      "top_n": 10
-    };
-
     try {
-      final response = await http.post(
-        Uri.parse("http://localhost:8000/match"),
-        headers: {"Content-Type": "application/json"},
-        body: jsonEncode(payload),
-      );
-
-      if (response.statusCode != 200) {
-        throw Exception("Erro ao enviar dados");
+      final token = await TokenService.getToken();
+      if (token == null) {
+        setState(() {
+          error = "Token de autenticação não encontrado. Faça login novamente.";
+          loading = false;
+        });
+        return;
       }
 
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString("financeIA_results", response.body);
+      final response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}/match'),
+        headers: ApiConfig.authHeaders(token),
+        body: jsonEncode({"top_n": 10}),
+      );
 
-      if (!mounted) return;
+      if (response.statusCode == 200) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString("financeIA_results", response.body);
 
-      Navigator.pushNamed(context, "/results");
+        if (!mounted) return;
+
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          "/resultados",
+          (route) => false,
+        );
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception(errorData['error'] ?? 'Erro ao gerar recomendações');
+      }
     } catch (e) {
-      setState(() => error = e.toString());
-      loading = false;
+      setState(() {
+        error = e.toString();
+        loading = false;
+      });
     }
   }
 
   @override
   Widget build(BuildContext context) {
     if (data == null) {
-      return const Scaffold(
-        body: Center(child: CircularProgressIndicator()),
-      );
+      return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
 
     return Scaffold(
@@ -126,9 +121,11 @@ class _ReviewScreenState extends State<ReviewScreen> {
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              ReviewHeader(onBack: () {
-                Navigator.pushReplacementNamed(context, "/questionnaire");
-              }),
+              ReviewHeader(
+                onBack: () {
+                  Navigator.pushReplacementNamed(context, "/questionario");
+                },
+              ),
 
               const SizedBox(height: 20),
 
@@ -175,10 +172,9 @@ class _ReviewScreenState extends State<ReviewScreen> {
                   child: Text(
                     "Ao continuar, você concorda que as recomendações são geradas por algoritmo e não constituem aconselhamento financeiro.",
                     style: TextStyle(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withValues(alpha:0.7),
+                      color: Theme.of(
+                        context,
+                      ).colorScheme.onSurface.withValues(alpha: 0.7),
                       fontSize: 12,
                     ),
                   ),
@@ -188,10 +184,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
               if (error.isNotEmpty)
                 Padding(
                   padding: const EdgeInsets.only(top: 16),
-                  child: Text(
-                    error,
-                    style: const TextStyle(color: Colors.red),
-                  ),
+                  child: Text(error, style: const TextStyle(color: Colors.red)),
                 ),
 
               const SizedBox(height: 20),
@@ -205,7 +198,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
                       ? const CircularProgressIndicator(color: Colors.white)
                       : const Text("Gerar recomendações"),
                 ),
-              )
+              ),
             ],
           ),
         ),

@@ -13,18 +13,25 @@ def register():
     data = request.get_json(force=True, silent=True) or {}
     email = data.get("email")
     password = data.get("password")
+    name = data.get("name")
 
-    if not email or not password:
-        return jsonify({"error": "Email e senha são obrigatórios"}), 400
+    if not email or not password or not name:
+        return jsonify({"error": "Nome, email e senha são obrigatórios"}), 400
 
     if not isinstance(password, str):
         return jsonify({"error": "Formato inválido. A senha deve ser uma string (texto)."}), 400
 
     if not isinstance(email, str):
         return jsonify({"error": "Formato inválido. O email deve ser uma string (texto)."}), 400
+
+    if not isinstance(name, str):
+        return jsonify({"error": "Formato inválido. O nome deve ser uma string (texto)."}), 400
         
     if len(password) < 6:
         return jsonify({"error": "A senha deve ter pelo menos 6 caracteres"}), 400
+
+    if len(name.strip()) < 2:
+        return jsonify({"error": "O nome deve ter pelo menos 2 caracteres"}), 400
 
     existing_user = users_collection.find_one({"email": email.lower()})
     if existing_user:
@@ -33,6 +40,7 @@ def register():
     hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
     
     user_data = {
+        "name": name.strip(),
         "email": email.lower(),
         "password": hashed_password,
         "created_at": datetime.datetime.now(datetime.timezone.utc)
@@ -62,6 +70,12 @@ def login():
             identity=str(user["_id"]), 
             expires_delta=datetime.timedelta(days=1)
         )
-        return jsonify(access_token=access_token), 200
+        return jsonify({
+            "access_token": access_token,
+            "user": {
+                "name": user["name"],
+                "email": user["email"]
+            }
+        }), 200
     else:
         return jsonify({"error": "Email ou senha inválidos"}), 401

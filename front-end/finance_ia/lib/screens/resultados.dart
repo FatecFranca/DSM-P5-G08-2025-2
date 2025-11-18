@@ -37,7 +37,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
 
       // Get results from SharedPreferences (saved by review screen)
       final prefs = await SharedPreferences.getInstance();
-      final resultsJson = prefs.getString("financeIA_results");
+      final resultsJson = prefs.getString("investIA_results");
 
       if (resultsJson == null) {
         if (mounted) {
@@ -151,33 +151,45 @@ class _ResultsScreenState extends State<ResultsScreen> {
 
               // PERFIL CARD
               Card(
-                color: Colors.blue.shade50,
+                color: Theme.of(context).colorScheme.surface,
                 child: Padding(
                   padding: const EdgeInsets.all(16),
                   child: Row(
                     children: [
                       CircleAvatar(
                         radius: 22,
-                        backgroundColor: Colors.blue.shade100,
-                        child: const Icon(
+                        backgroundColor: Theme.of(
+                          context,
+                        ).colorScheme.primary.withOpacity(0.15),
+                        child: Icon(
                           Icons.trending_up,
-                          color: Colors.blue,
+                          color: Theme.of(context).colorScheme.primary,
                         ),
                       ),
                       const SizedBox(width: 12),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text(
+                          Text(
                             "Seu perfil",
-                            style: TextStyle(fontSize: 12, color: Colors.grey),
+                            style: Theme.of(context).textTheme.bodySmall
+                                ?.copyWith(
+                                  fontSize: 12,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface.withOpacity(0.7),
+                                ),
                           ),
                           Text(
                             profileMatch['perfil_tipo'] ?? 'Investidor',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.bold,
-                            ),
+                            style: Theme.of(context).textTheme.titleMedium
+                                ?.copyWith(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Theme.of(
+                                    context,
+                                  ).colorScheme.onSurface,
+                                ),
                           ),
                         ],
                       ),
@@ -236,7 +248,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                             children: [
                               Icon(Icons.trending_up, color: Colors.green),
                               Text(
-                                '${(e.value.score * 100).toStringAsFixed(1)}%',
+                                '${(e.value.probMatch * 100).toStringAsFixed(1)}%',
                                 style: TextStyle(
                                   fontSize: 12,
                                   fontWeight: FontWeight.bold,

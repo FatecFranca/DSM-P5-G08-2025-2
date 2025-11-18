@@ -1,3 +1,7 @@
+<<<<<<< HEAD
+=======
+# Investia
+>>>>>>> b934648 (Atualizando os READMEs)
 
 # Front-end — InvestIA
 
@@ -24,12 +28,46 @@ Aplicativo Flutter multiplataforma para interação com o sistema de recomendaç
 	flutter run
 	```
 
+<<<<<<< HEAD
 ## 🗺️ Navegação
 O app utiliza navegação por rotas nomeadas, facilitando a transição entre telas como:
 - Página Inicial
 - Tela de Perfil do Usuário
 - Tela de Recomendações
 - Tela de Histórico
+=======
+ 
+# Front-end - Finance IA
+
+Aplicativo Flutter para interação com o sistema de recomendação financeira.
+
+## Estrutura
+- `lib/`: Código principal do app
+- `android/`, `ios/`, `web/`, `linux/`, `macos/`, `windows/`: Suporte multiplataforma
+- `pubspec.yaml`: Dependências do projeto
+
+## Como executar
+1. Instale o Flutter: https://docs.flutter.dev/get-started/install
+2. Instale as dependências:
+	```bash
+	flutter pub get
+	```
+3. Execute o app:
+	```bash
+	flutter run
+	```
+
+## Funcionalidades
+- Visualização de recomendações
+- Análise de perfil
+- Histórico de ações
+
+## Requisitos
+- Flutter 3.0+
+
+## Documentação
+Consulte o README principal para detalhes do projeto.
+>>>>>>> b934648 (Atualizando os READMEs)
 
 ## 🔗 Integração com Backend
 O front-end se comunica com a API Python via HTTP (REST), utilizando o pacote `http` do Flutter. As principais integrações são:

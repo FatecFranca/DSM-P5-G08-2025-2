@@ -49,7 +49,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'FinanceIA',
+      title: 'InvestIA',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
@@ -66,7 +66,7 @@ class _MyAppState extends State<MyApp> {
             );
           case '/login':
             return MaterialPageRoute(builder: (context) => const LoginScreen());
-          case '/cadastroUsuario':
+          case '/cadastro':
             return MaterialPageRoute(
               builder: (context) => const CadastroScreen(),
             );
@@ -88,15 +88,14 @@ class _MyAppState extends State<MyApp> {
             );
           case '/explorar':
             return MaterialPageRoute(
-              builder: (context) => const ExploreScreen(),
+              builder: (context) => const ExplorarScreen(),
             );
           case '/perfil':
             return MaterialPageRoute(
               builder: (context) => const ProfileScreen(),
             );
           case '/detalhes':
-            final ticker =
-                settings.arguments as String; // 👈 recebe o argumento
+            final ticker = settings.arguments as String;
             return MaterialPageRoute(
               builder: (context) => DetailScreen(ticker: ticker),
             );

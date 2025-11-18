@@ -53,7 +53,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
     if (!mounted) return;
 
     if (jsonStr == null) {
-      Navigator.pushReplacementNamed(context, "/questionnaire");
+      Navigator.pushReplacementNamed(context, "/questionario");
       return;
     }
 

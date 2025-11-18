@@ -53,17 +53,29 @@ class _ResultsScreenState extends State<ResultsScreen> {
           recommendations = (data['items'] as List)
               .map((item) => Recommendation.fromMap(item))
               .toList();
-          profileMatch = {
-            'perfil_id': data['perfil_id'],
-            'perfil_tipo': data['perfil_tipo'],
-          };
+
+          // Handle different response structures
+          if (data['perfil'] is String) {
+            // From /recommend endpoint
+            profileMatch = {'perfil_tipo': data['perfil']};
+          } else if (data['perfil'] is Map) {
+            // From /recommend endpoint with full profile
+            profileMatch = data['perfil'] as Map<String, dynamic>;
+          } else {
+            // From /match endpoint
+            profileMatch = {
+              'perfil_id': data['perfil_id'],
+              'perfil_tipo': data['perfil_tipo'],
+            };
+          }
+
           loading = false;
         });
       }
     } catch (e) {
       if (mounted) {
         setState(() {
-          error = 'Erro de conexão: $e';
+          error = 'Erro ao carregar resultados: $e';
           loading = false;
         });
       }
@@ -161,7 +173,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
                             style: TextStyle(fontSize: 12, color: Colors.grey),
                           ),
                           Text(
-                            profileMatch['tipo'] ?? 'Investidor',
+                            profileMatch['perfil_tipo'] ?? 'Investidor',
                             style: const TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,

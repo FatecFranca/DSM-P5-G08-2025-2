@@ -26,24 +26,35 @@ class _ProfileScreenState extends State<ProfileScreen> {
   }
 
   Future<void> _loadData() async {
-    final prefs = await SharedPreferences.getInstance();
+    try {
+      final prefs = await SharedPreferences.getInstance();
 
-    final userData = prefs.getString("financeIA_user");
+      final userData = prefs.getString("financeIA_user");
 
-    if (!mounted) return;
-    if (userData == null) {
-      Navigator.pushReplacementNamed(context, "/login");
-      return;
+      if (!mounted) return;
+      if (userData == null) {
+        Navigator.pushReplacementNamed(context, "/login");
+        return;
+      }
+
+      user = UserModel.fromJson(jsonDecode(userData));
+
+      final profileData = prefs.getString("financeIA_profile");
+      if (profileData != null) {
+        try {
+          profile = ProfileModel.fromJson(jsonDecode(profileData));
+        } catch (e) {
+          // If profile parsing fails, clear it and show not configured
+          await prefs.remove("financeIA_profile");
+          profile = null;
+        }
+      }
+
+      setState(() => loading = false);
+    } catch (e) {
+      // Handle any errors during loading
+      setState(() => loading = false);
     }
-
-    user = UserModel.fromJson(jsonDecode(userData));
-
-    final profileData = prefs.getString("financeIA_profile");
-    if (profileData != null) {
-      profile = ProfileModel.fromJson(jsonDecode(profileData));
-    }
-
-    setState(() => loading = false);
   }
 
   Future<void> _logout() async {
@@ -158,7 +169,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           ),
                           TextButton(
                             onPressed: () =>
-                                Navigator.pushNamed(context, "/questionnaire"),
+                                Navigator.pushNamed(context, "/questionario"),
                             child: const Text("Editar"),
                           ),
                         ],
@@ -254,10 +265,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                             ),
                             const SizedBox(height: 14),
                             ElevatedButton(
-                              onPressed: () => Navigator.pushNamed(
-                                context,
-                                "/questionnaire",
-                              ),
+                              onPressed: () =>
+                                  Navigator.pushNamed(context, "/questionario"),
                               child: const Text("Configurar perfil"),
                             ),
                           ],

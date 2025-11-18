@@ -24,18 +24,9 @@ class BottomNav extends StatelessWidget {
       },
       type: BottomNavigationBarType.fixed,
       items: const [
-        BottomNavigationBarItem(
-          icon: Icon(Icons.show_chart),
-          label: 'Home',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.explore),
-          label: 'Explorar',
-        ),
-        BottomNavigationBarItem(
-          icon: Icon(Icons.person),
-          label: 'Perfil',
-        ),
+        BottomNavigationBarItem(icon: Icon(Icons.show_chart), label: 'Home'),
+        BottomNavigationBarItem(icon: Icon(Icons.explore), label: 'Explorar'),
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
       ],
     );
   }

@@ -3,6 +3,7 @@ import 'screens/pagina_inicial.dart';
 import 'screens/login.dart';
 import 'screens/cadastro_usuario.dart';
 import 'screens/questionario.dart';
+import 'screens/review.dart';
 import 'screens/dashboard.dart';
 import 'screens/explorar.dart';
 import 'screens/resultados.dart';
@@ -73,7 +74,10 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute(
               builder: (context) => const QuestionnaireScreen(),
             );
-
+          case '/review':
+            return MaterialPageRoute(
+              builder: (context) => const ReviewScreen(),
+            );
           case '/resultados':
             return MaterialPageRoute(
               builder: (context) => const ResultsScreen(),

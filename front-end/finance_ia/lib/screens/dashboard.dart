@@ -28,7 +28,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Future<void> loadUser() async {
     final prefs = await SharedPreferences.getInstance();
-    final userData = prefs.getString("financeIA_user");
+    final userData = prefs.getString("investIA_user");
 
     if (!mounted) return;
 
@@ -47,7 +47,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       });
 
       // Check for profile locally first
-      final localProfile = prefs.getString("financeIA_profile");
+      final localProfile = prefs.getString("investIA_profile");
 
       if (localProfile != null) {
         setState(() {
@@ -66,7 +66,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Future<void> _logout() async {
     await AuthService.logout();
     if (mounted) {
-      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+      Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
     }
   }
 
@@ -78,7 +78,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         // Save profile locally for future use
         final prefs = await SharedPreferences.getInstance();
         await prefs.setString(
-          'financeIA_profile',
+          'investIA_profile',
           json.encode(result['profile']),
         );
 
@@ -104,14 +104,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
       final prefs = await SharedPreferences.getInstance();
 
       // Check if we already have results
-      final hasResults = prefs.getString("financeIA_results") != null;
+      final hasResults = prefs.getString("investIA_results") != null;
       if (hasResults) {
         Navigator.pushNamed(context, "/resultados");
         return;
       }
 
       // Get profile data
-      final profileData = prefs.getString("financeIA_profile");
+      final profileData = prefs.getString("investIA_profile");
       if (profileData == null) {
         Navigator.pushNamed(context, "/questionario");
         return;
@@ -151,7 +151,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       if (response.statusCode == 200) {
         // Save results and navigate
-        await prefs.setString("financeIA_results", response.body);
+        await prefs.setString("investIA_results", response.body);
         if (mounted) {
           Navigator.pushNamed(context, "/resultados");
         }
@@ -282,16 +282,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     // DISCLAIMER
                     Card(
-                      color: Colors.grey.shade200,
-                      child: const Padding(
-                        padding: EdgeInsets.all(14),
+                      color: Theme.of(context).colorScheme.surface,
+                      child: Padding(
+                        padding: const EdgeInsets.all(14),
                         child: Text(
                           "Aviso: Investimentos em ações envolvem riscos. As recomendações são baseadas em análise algorítmica e não garantem retorno. Consulte um profissional certificado.",
-                          style: TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                            height: 1.4,
-                          ),
+                          style: Theme.of(context).textTheme.bodySmall
+                              ?.copyWith(
+                                fontSize: 12,
+                                color: Theme.of(
+                                  context,
+                                ).colorScheme.onSurface.withOpacity(0.7),
+                                height: 1.4,
+                              ),
                         ),
                       ),
                     ),
@@ -310,8 +313,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   // -------------------------------
 
   Widget buildProfileCard() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Card(
-      color: Colors.blue.shade50,
+      color: colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Row(
@@ -319,27 +324,38 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             CircleAvatar(
               radius: 26,
-              backgroundColor: Colors.blue,
-              child: const Icon(Icons.track_changes, color: Colors.white),
+              backgroundColor: colorScheme.primary,
+              child: Icon(Icons.track_changes, color: colorScheme.onPrimary),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "Configure seu perfil",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                      fontSize: 18,
+                    ),
                   ),
                   const SizedBox(height: 6),
-                  const Text(
+                  Text(
                     "Responda algumas perguntas para receber recomendações personalizadas de investimentos.",
-                    style: TextStyle(fontSize: 13, color: Colors.grey),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.8),
+                      fontSize: 13,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
                     onPressed: () =>
                         Navigator.pushNamed(context, "/questionario"),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: colorScheme.primary,
+                      foregroundColor: colorScheme.onPrimary,
+                    ),
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
@@ -359,8 +375,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   }
 
   Widget buildRecommendationsCard() {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Card(
-      color: Colors.green.shade50,
+      color: colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.all(18),
         child: Row(
@@ -368,27 +386,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             CircleAvatar(
               radius: 26,
-              backgroundColor: Colors.green,
-              child: const Icon(Icons.auto_awesome, color: Colors.white),
+              backgroundColor: colorScheme.secondary,
+              child: Icon(Icons.auto_awesome, color: colorScheme.onSecondary),
             ),
             const SizedBox(width: 14),
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     "Ver recomendações",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: colorScheme.onSurface,
+                      fontSize: 18,
+                    ),
                   ),
                   const SizedBox(height: 6),
-                  const Text(
+                  Text(
                     "Veja as ações mais compatíveis com seu perfil de investidor.",
-                    style: TextStyle(fontSize: 13, color: Colors.grey),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.8),
+                      fontSize: 13,
+                    ),
                   ),
                   const SizedBox(height: 12),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
+                      backgroundColor: colorScheme.secondary,
+                      foregroundColor: colorScheme.onSecondary,
                     ),
                     onPressed: () async {
                       await _generateRecommendations();
@@ -417,15 +443,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
     required String title,
     required String text,
   }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
     return Card(
       margin: const EdgeInsets.only(bottom: 12),
+      color: colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Row(
           children: [
             CircleAvatar(
               radius: 20,
-              backgroundColor: color.withValues(alpha: 0.15),
+              backgroundColor: color.withOpacity(0.15),
               child: Text(
                 number,
                 style: TextStyle(
@@ -442,15 +471,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 children: [
                   Text(
                     title,
-                    style: const TextStyle(
-                      fontSize: 16,
+                    style: theme.textTheme.bodyLarge?.copyWith(
                       fontWeight: FontWeight.w600,
+                      color: colorScheme.onSurface,
+                      fontSize: 16,
                     ),
                   ),
                   const SizedBox(height: 4),
                   Text(
                     text,
-                    style: const TextStyle(fontSize: 13, color: Colors.grey),
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: colorScheme.onSurface.withOpacity(0.8),
+                      fontSize: 13,
+                    ),
                   ),
                 ],
               ),

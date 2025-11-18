@@ -23,7 +23,7 @@ class LogoHeader extends StatelessWidget {
         ),
         const SizedBox(width: 12),
         const Text(
-          "FinanceIA",
+          "InvestIA",
           style: TextStyle(
             fontSize: 32,
             fontWeight: FontWeight.bold,

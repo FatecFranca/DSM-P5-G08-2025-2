@@ -76,11 +76,14 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
     return Scaffold(
       body: Container(
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           gradient: LinearGradient(
-            colors: [Color(0xFFFFFFFF), Color(0xFFE6EEF1)],
+            colors: [colorScheme.background, colorScheme.surface],
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
           ),
@@ -117,24 +120,27 @@ class _LoginScreenState extends State<LoginScreen> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(16),
                     ),
+                    color: colorScheme.surface,
                     child: Padding(
                       padding: const EdgeInsets.all(24),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
                         children: [
-                          const Text(
+                          Text(
                             "Bem-vindo",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
-                              fontSize: 26,
+                            style: theme.textTheme.headlineSmall?.copyWith(
                               fontWeight: FontWeight.bold,
+                              color: colorScheme.onSurface,
                             ),
                           ),
                           const SizedBox(height: 6),
                           Text(
                             "Entre para começar a investir com inteligência",
                             textAlign: TextAlign.center,
-                            style: TextStyle(color: Colors.grey[700]),
+                            style: theme.textTheme.bodyMedium?.copyWith(
+                              color: colorScheme.onSurface.withOpacity(0.8),
+                            ),
                           ),
                           const SizedBox(height: 24),
 
@@ -167,10 +173,12 @@ class _LoginScreenState extends State<LoginScreen> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              const Text(
+                              Text(
                                 "Não tem uma conta? ",
-                                style: TextStyle(
-                                  color: Color(0xFF6B7280),
+                                style: theme.textTheme.bodySmall?.copyWith(
+                                  color: colorScheme.onSurface.withOpacity(
+                                    0.85,
+                                  ),
                                   fontSize: 14,
                                 ),
                               ),
@@ -180,13 +188,13 @@ class _LoginScreenState extends State<LoginScreen> {
                                     : () {
                                         Navigator.pushNamed(
                                           context,
-                                          '/cadastroUsuario',
+                                          '/cadastro',
                                         );
                                       },
-                                child: const Text(
+                                child: Text(
                                   "Criar Conta",
-                                  style: TextStyle(
-                                    color: Color(0xFF2C5F41),
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: colorScheme.primary,
                                     fontSize: 14,
                                     fontWeight: FontWeight.w600,
                                     decoration: TextDecoration.underline,
@@ -201,9 +209,9 @@ class _LoginScreenState extends State<LoginScreen> {
                           Text(
                             "Ao entrar, você concorda com nossos termos de uso e política de privacidade",
                             textAlign: TextAlign.center,
-                            style: TextStyle(
+                            style: theme.textTheme.bodySmall?.copyWith(
                               fontSize: 12,
-                              color: Colors.grey[600],
+                              color: colorScheme.onSurface.withOpacity(0.75),
                               height: 1.4,
                             ),
                           ),

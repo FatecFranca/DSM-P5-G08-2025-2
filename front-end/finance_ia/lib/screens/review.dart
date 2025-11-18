@@ -48,7 +48,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
   Future<void> loadStoredData() async {
     final prefs = await SharedPreferences.getInstance();
-    final jsonStr = prefs.getString("financeIA_profile");
+    final jsonStr = prefs.getString("investIA_profile");
 
     if (!mounted) return;
 
@@ -88,7 +88,7 @@ class _ReviewScreenState extends State<ReviewScreen> {
 
       if (response.statusCode == 200) {
         final prefs = await SharedPreferences.getInstance();
-        await prefs.setString("financeIA_results", response.body);
+        await prefs.setString("investIA_results", response.body);
 
         if (!mounted) return;
 

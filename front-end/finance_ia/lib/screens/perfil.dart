@@ -63,7 +63,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     await prefs.remove("financeIA_profile");
 
     if (!mounted) return;
-    Navigator.pushReplacementNamed(context, "/login");
+    Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
   String getLabel(String key, String value) {

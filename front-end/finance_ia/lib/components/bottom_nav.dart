@@ -8,14 +8,17 @@ class BottomNav extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
-      currentIndex: active == "profile" ? 2 : (active == "explore" ? 1 : 0),
+      currentIndex: active == "profile"
+          ? 2
+          : (active == "explore" || active == "results" ? 1 : 0),
       onTap: (i) {
         switch (i) {
           case 0:
             Navigator.pushReplacementNamed(context, "/dashboard");
             break;
           case 1:
-            Navigator.pushReplacementNamed(context, "/explorar");
+            // Agora o ícone 'Explorar' direciona para a tela de resultados
+            Navigator.pushReplacementNamed(context, "/resultados");
             break;
           case 2:
             Navigator.pushReplacementNamed(context, "/perfil");

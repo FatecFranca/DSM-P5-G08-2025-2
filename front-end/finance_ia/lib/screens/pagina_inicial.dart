@@ -8,10 +8,7 @@ import '../theme/app_theme.dart';
 class PaginaInicial extends StatelessWidget {
   final VoidCallback alternarTema;
 
-  const PaginaInicial({
-    super.key,
-    required this.alternarTema,
-  });
+  const PaginaInicial({super.key, required this.alternarTema});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +35,7 @@ class PaginaInicial extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FinanceIA'),
+        title: const Text('InvestIA'),
         centerTitle: true,
         backgroundColor: AppTheme.corPrincipal,
         foregroundColor: Colors.white,
@@ -61,19 +58,13 @@ class PaginaInicial extends StatelessWidget {
                   const Text(
                     'Seu Assistente Financeiro Inteligente',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 16),
                   Text(
                     'Descubra as melhores opções de investimento personalizadas para o seu perfil. Deixe a inteligência artificial trabalhar por você.',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 16,
-                    ),
+                    style: TextStyle(color: Colors.grey[700], fontSize: 16),
                   ),
                   const SizedBox(height: 30),
                   Wrap(
@@ -84,7 +75,7 @@ class PaginaInicial extends StatelessWidget {
                       BotaoPersonalizado(
                         texto: 'Começar Agora',
                         aoPressionar: () {
-                          Navigator.pushNamed(context, '/cadastroUsuario');
+                          Navigator.pushNamed(context, '/cadastro');
                         },
                       ),
                       OutlinedButton(
@@ -93,9 +84,13 @@ class PaginaInicial extends StatelessWidget {
                         },
                         style: OutlinedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 24, vertical: 14),
+                            horizontal: 24,
+                            vertical: 14,
+                          ),
                           side: const BorderSide(
-                              color: AppTheme.corPrincipal, width: 1.5),
+                            color: AppTheme.corPrincipal,
+                            width: 1.5,
+                          ),
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -142,16 +137,14 @@ class PaginaInicial extends StatelessWidget {
                 children: [
                   Text(
                     'Como Funciona',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
                   ),
                   SizedBox(height: 24),
                   ItemEtapa(
                     etapa: '1',
                     titulo: 'Crie sua conta',
-                    descricao: 'Cadastre-se gratuitamente em menos de 1 minuto.',
+                    descricao:
+                        'Cadastre-se gratuitamente em menos de 1 minuto.',
                   ),
                   ItemEtapa(
                     etapa: '2',
@@ -174,10 +167,10 @@ class PaginaInicial extends StatelessWidget {
               margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 40),
               padding: const EdgeInsets.all(24),
               decoration: BoxDecoration(
-                color: AppTheme.corPrincipal.withValues(alpha:0.05),
+                color: AppTheme.corPrincipal.withValues(alpha: 0.05),
                 borderRadius: BorderRadius.circular(16),
                 border: Border.all(
-                  color: AppTheme.corPrincipal.withValues(alpha:0.3),
+                  color: AppTheme.corPrincipal.withValues(alpha: 0.3),
                 ),
               ),
               child: Column(
@@ -185,10 +178,7 @@ class PaginaInicial extends StatelessWidget {
                   const Text(
                     'Pronto para transformar seus investimentos?',
                     textAlign: TextAlign.center,
-                    style: TextStyle(
-                      fontSize: 22,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
                   ),
                   const SizedBox(height: 12),
                   Text(
@@ -200,7 +190,7 @@ class PaginaInicial extends StatelessWidget {
                   BotaoPersonalizado(
                     texto: 'Criar Conta Gratuita',
                     aoPressionar: () {
-                      Navigator.pushNamed(context, '/cadastroUsuario');
+                      Navigator.pushNamed(context, '/cadastro');
                     },
                   ),
                 ],
@@ -211,7 +201,7 @@ class PaginaInicial extends StatelessWidget {
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 20),
               child: Text(
-                '© 2025 FinanceIA. Seu assistente financeiro inteligente.',
+                '© 2025 InvestIA. Seu assistente financeiro inteligente.',
                 style: TextStyle(color: Colors.grey[600]),
               ),
             ),

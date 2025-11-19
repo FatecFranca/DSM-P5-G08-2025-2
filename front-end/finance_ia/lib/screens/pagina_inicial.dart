@@ -35,7 +35,10 @@ class PaginaInicial extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('InvestIA'),
+        title: const Text(
+          'InvestIA',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         centerTitle: true,
         backgroundColor: AppTheme.corPrincipal,
         foregroundColor: Colors.white,

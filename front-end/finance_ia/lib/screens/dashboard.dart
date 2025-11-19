@@ -195,7 +195,18 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Dashboard'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Voltar para login',
+          onPressed: () {
+            Navigator.pushReplacementNamed(context, '/login');
+          },
+        ),
+        centerTitle: true,
+        title: const Text(
+          'Dashboard',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -213,21 +224,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
           padding: const EdgeInsets.all(18),
           child: Column(
             children: [
-              // HEADER
+              // HEADER CENTRALIZADO
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Text(
-                    "Olá, $firstName!",
-                    style: const TextStyle(
-                      fontSize: 26,
-                      fontWeight: FontWeight.bold,
+                  Center(
+                    child: Text(
+                      "Olá, $firstName!",
+                      style: const TextStyle(
+                        fontSize: 26,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    "Bem-vindo ao seu assistente financeiro",
-                    style: TextStyle(fontSize: 14, color: Colors.grey.shade600),
+                  Center(
+                    child: Text(
+                      "Bem-vindo ao seu assistente financeiro",
+                      style: TextStyle(
+                        fontSize: 14,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -377,6 +395,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
   Widget buildRecommendationsCard() {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final isLight = Theme.of(context).brightness == Brightness.light;
+    final highlightColor = isLight ? Colors.green : colorScheme.secondary;
+    final highlightOnColor = isLight ? Colors.white : colorScheme.onSecondary;
     return Card(
       color: colorScheme.surface,
       child: Padding(
@@ -386,8 +407,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           children: [
             CircleAvatar(
               radius: 26,
-              backgroundColor: colorScheme.secondary,
-              child: Icon(Icons.auto_awesome, color: colorScheme.onSecondary),
+              backgroundColor: highlightColor,
+              child: Icon(Icons.auto_awesome, color: highlightOnColor),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -413,8 +434,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   const SizedBox(height: 12),
                   ElevatedButton(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: colorScheme.secondary,
-                      foregroundColor: colorScheme.onSecondary,
+                      backgroundColor: highlightColor,
+                      foregroundColor: highlightOnColor,
                     ),
                     onPressed: () async {
                       await _generateRecommendations();

@@ -29,7 +29,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      final userData = prefs.getString("financeIA_user");
+      final userData = prefs.getString("investIA_user");
 
       if (!mounted) return;
       if (userData == null) {
@@ -39,7 +39,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
       user = UserModel.fromJson(jsonDecode(userData));
 
-      final profileData = prefs.getString("financeIA_profile");
+      final profileData = prefs.getString("investIA_profile");
       if (profileData != null) {
         try {
           profile = ProfileModel.fromJson(jsonDecode(profileData));
@@ -59,8 +59,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   Future<void> _logout() async {
     final prefs = await SharedPreferences.getInstance();
-    await prefs.remove("financeIA_user");
-    await prefs.remove("financeIA_profile");
+    await prefs.remove("investIA_user");
+    await prefs.remove("investIA_profile");
 
     if (!mounted) return;
     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
@@ -96,18 +96,33 @@ class _ProfileScreenState extends State<ProfileScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () =>
+              Navigator.pushReplacementNamed(context, '/dashboard'),
+        ),
+        centerTitle: true,
+        title: const Text(
+          'Perfil',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sair',
+            onPressed: () async {
+              await _logout();
+            },
+          ),
+        ],
+      ),
       bottomNavigationBar: const BottomNav(active: "profile"),
       body: SingleChildScrollView(
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 40),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "Perfil",
-              style: TextStyle(fontSize: 26, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 24),
-
             // USER CARD
             Card(
               elevation: 1,
@@ -227,7 +242,16 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                       spacing: 8,
                                       runSpacing: 8,
                                       children: profile!.setores
-                                          .map((s) => SectorBadge(text: s))
+                                          .map(
+                                            (s) => SectorBadge(
+                                              text: s,
+                                              backgroundColor: Colors
+                                                  .blueGrey
+                                                  .shade800, // Ajuste para modo escuro
+                                              textColor: Colors
+                                                  .white, // Texto mais visível
+                                            ),
+                                          )
                                           .toList(),
                                     ),
                                   ],
@@ -274,16 +298,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ),
                   ),
-
-            const SizedBox(height: 30),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: _logout,
-                icon: const Icon(Icons.logout),
-                label: const Text("Sair da conta"),
-              ),
-            ),
           ],
         ),
       ),

@@ -74,6 +74,18 @@ class _LoginScreenState extends State<LoginScreen> {
     }
   }
 
+  void handleRegisterSuccess() {
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text("Cadastro realizado com sucesso!"),
+          backgroundColor: Colors.green,
+        ),
+      );
+      Navigator.pushNamedAndRemoveUntil(context, '/login', (route) => false);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

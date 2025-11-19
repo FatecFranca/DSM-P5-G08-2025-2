@@ -124,31 +124,40 @@ class _ResultsScreenState extends State<ResultsScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () =>
+              Navigator.pushReplacementNamed(context, "/dashboard"),
+        ),
+        centerTitle: true,
+        title: const Text(
+          'Recomendações',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sair',
+            onPressed: () async {
+              await AuthService.logout();
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/',
+                  (route) => false,
+                );
+              }
+            },
+          ),
+        ],
+      ),
       bottomNavigationBar: const BottomNav(active: "results"),
       body: SafeArea(
         child: Container(
           padding: const EdgeInsets.all(16),
           child: Column(
             children: [
-              // HEADER
-              Row(
-                children: [
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
-                    onPressed: () =>
-                        Navigator.pushReplacementNamed(context, "/dashboard"),
-                  ),
-                  const Spacer(),
-                  const Text(
-                    "Recomendações",
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                  ),
-                  const Spacer(),
-                  const SizedBox(width: 40),
-                ],
-              ),
-              const SizedBox(height: 14),
-
               // PERFIL CARD
               Card(
                 color: Theme.of(context).colorScheme.surface,

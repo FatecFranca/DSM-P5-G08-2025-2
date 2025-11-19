@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import '../models/trend_model.dart';
 import '../components/detail_info_card.dart';
-import '../components/back_button_header.dart';
+import '../services/auth_service.dart';
 
 class DetailScreen extends StatefulWidget {
   final String ticker;
@@ -128,16 +128,37 @@ class _DetailScreenState extends State<DetailScreen> {
     }
 
     return Scaffold(
+      appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () => Navigator.pop(context),
+        ),
+        centerTitle: true,
+        title: const Text(
+          'Detalhes',
+          style: TextStyle(fontWeight: FontWeight.bold),
+        ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Sair',
+            onPressed: () async {
+              await AuthService.logout();
+              if (context.mounted) {
+                Navigator.pushNamedAndRemoveUntil(
+                  context,
+                  '/',
+                  (route) => false,
+                );
+              }
+            },
+          ),
+        ],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(20),
         child: Column(
           children: [
-            BackButtonHeader(
-              title: "Detalhes",
-              onBack: () => Navigator.pop(context),
-            ),
-            const SizedBox(height: 20),
-
             // HEADER TICKER
             Card(
               elevation: 1,

@@ -17,13 +17,13 @@ class BotaoPersonalizado extends StatelessWidget {
     return ElevatedButton(
       onPressed: aoPressionar,
       style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor, // ✅ Cor principal (#064C68)
-        foregroundColor: Colors.white, // ✅ Texto branco
+        backgroundColor: primaryColor,
+        foregroundColor: Colors.white, 
         padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(12),
         ),
-        elevation: 4, // Leve sombra
+        elevation: 4, 
         shadowColor: primaryColor.withValues(alpha:0.4),
       ),
       child: Text(

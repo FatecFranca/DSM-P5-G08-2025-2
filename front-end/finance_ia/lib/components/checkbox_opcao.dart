@@ -18,7 +18,7 @@ class CheckboxOption extends StatelessWidget {
       title: Text(label),
       value: checked,
 
-      // IMPORTANTE: usar onChanged para chamar a função
+
       onChanged: (value) => onToggle(),
       controlAffinity: ListTileControlAffinity.leading,
     );

@@ -103,17 +103,15 @@ class _DashboardScreenState extends State<DashboardScreen> {
     try {
       final prefs = await SharedPreferences.getInstance();
 
-      // Check if we already have results
-      final hasResults = prefs.getString("investIA_results") != null;
-      if (hasResults) {
-        Navigator.pushNamed(context, "/resultados");
-        return;
-      }
-
-      // Get profile data
       final profileData = prefs.getString("investIA_profile");
       if (profileData == null) {
         Navigator.pushNamed(context, "/questionario");
+        return;
+      }
+
+      final hasResults = prefs.getString("investIA_results") != null;
+      if (hasResults) {
+        Navigator.pushNamed(context, "/resultados");
         return;
       }
 
@@ -124,10 +122,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         builder: (context) => const Center(child: CircularProgressIndicator()),
       );
 
-      // Get authentication token
+ 
       final token = await TokenService.getToken();
       if (token == null) {
-        if (mounted) Navigator.pop(context); // Hide loading
+        if (mounted) Navigator.pop(context); 
         Navigator.pushReplacementNamed(context, "/login");
         return;
       }
@@ -136,27 +134,24 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
       print('Sending to /match: ${jsonEncode(payload)}');
 
-      // Call match endpoint (uses profile from backend)
+
       final response = await http.post(
         Uri.parse('${ApiConfig.baseUrl}/match'),
         headers: ApiConfig.authHeaders(token),
         body: jsonEncode(payload),
       );
 
-      // Hide loading
       if (mounted) Navigator.pop(context);
 
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        // Save results and navigate
         await prefs.setString("investIA_results", response.body);
         if (mounted) {
           Navigator.pushNamed(context, "/resultados");
         }
       } else {
-        // Show detailed error
         final errorData = json.decode(response.body);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
@@ -171,12 +166,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
         }
       }
     } catch (e) {
-      // Hide loading if still showing
       if (mounted && Navigator.canPop(context)) {
         Navigator.pop(context);
       }
 
-      // Show error
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Erro: $e'), backgroundColor: Colors.red),
@@ -298,7 +291,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
                     const SizedBox(height: 20),
 
-                    // DISCLAIMER
                     Card(
                       color: Theme.of(context).colorScheme.surface,
                       child: Padding(
@@ -325,10 +317,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
     );
   }
-
-  // -------------------------------
-  // COMPONENTES
-  // -------------------------------
 
   Widget buildProfileCard() {
     final theme = Theme.of(context);
@@ -396,8 +384,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final isLight = Theme.of(context).brightness == Brightness.light;
-    final highlightColor = isLight ? Colors.green : colorScheme.secondary;
-    final highlightOnColor = isLight ? Colors.white : colorScheme.onSecondary;
+    final highlightColor = isLight ? Colors.green.shade600 : Colors.green;
+    final highlightOnColor = Colors.white;
     return Card(
       color: colorScheme.surface,
       child: Padding(

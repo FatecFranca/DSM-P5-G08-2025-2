@@ -6,6 +6,7 @@ import '../components/questionario_opcao.dart';
 import '../components/checkbox_opcao.dart';
 import '../components/progress_bar.dart';
 import '../services/profile_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class QuestionnaireScreen extends StatefulWidget {
   const QuestionnaireScreen({super.key});
@@ -35,38 +36,40 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
     if (step < totalSteps) {
       setState(() => step++);
     } else {
-      // Save profile to backend
       await saveProfile();
     }
   }
 
   Future<void> saveProfile() async {
     try {
-      final result = await ProfileService.saveProfile(data);
+      // Salva local
+      final local = await ProfileService.saveProfile(data);
+      if (!local['success']) {
+        throw Exception(local['error'] ?? 'Falha ao salvar local');
+      }
 
-      if (result['success']) {
-        if (mounted) {
-          // Navigate to dashboard preserving authentication context
-          Navigator.pushNamedAndRemoveUntil(
-            context,
-            "/dashboard",
-            (route) => false,
-          );
+      // Envia para backend
+      final remoto = await ProfileService.saveProfileRemote(data);
+      if (!remoto['success']) {
+        throw Exception(remoto['error'] ?? 'Falha ao salvar remoto');
+      }
 
-          // Show success message
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('Perfil salvo com sucesso!'),
-              backgroundColor: Colors.green,
-            ),
-          );
-        }
-      } else {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(result['error'] ?? 'Erro ao salvar perfil')),
-          );
-        }
+      // Limpa resultados anteriores para forçar novo cálculo
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('investIA_results');
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Perfil atualizado! Gere novas recomendações.'),
+            backgroundColor: Colors.green,
+          ),
+        );
+        Navigator.pushNamedAndRemoveUntil(
+          context,
+          "/dashboard",
+          (route) => false,
+        );
       }
     } catch (e) {
       if (mounted) {
@@ -115,9 +118,6 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
               ProgressBar(value: progress),
               const SizedBox(height: 20),
 
-              // ---------------------
-              // STEP CARDS
-              // ---------------------
               if (step == 1)
                 QuestionCard(
                   child: Column(
@@ -210,7 +210,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
                         value: "baixo",
                         groupValue: data.confortoOscilacao,
                         title: "Baixo conforto",
-                        subtitle: "Prefiro estabilidade",
+                        subtitle: "Aceito variações grandes",
                         onChanged: (v) =>
                             setState(() => data.confortoOscilacao = v),
                       ),
@@ -226,7 +226,7 @@ class _QuestionnaireScreenState extends State<QuestionnaireScreen> {
                         value: "alto",
                         groupValue: data.confortoOscilacao,
                         title: "Alto conforto",
-                        subtitle: "Aceito variações grandes",
+                        subtitle: "Prefiro estabilidade",
                         onChanged: (v) =>
                             setState(() => data.confortoOscilacao = v),
                       ),

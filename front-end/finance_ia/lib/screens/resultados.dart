@@ -1,9 +1,12 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:http/http.dart' as http;
 import '../models/recommendation.dart';
 import '../components/bottom_nav.dart';
 import '../services/auth_service.dart';
+import '../services/token_service.dart';
+import '../services/api_config.dart';
 
 class ResultsScreen extends StatefulWidget {
   const ResultsScreen({super.key});
@@ -17,6 +20,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
   Map<String, dynamic> profileMatch = {};
   bool loading = true;
   String? error;
+  bool refreshing = false;
 
   @override
   void initState() {
@@ -26,7 +30,6 @@ class _ResultsScreenState extends State<ResultsScreen> {
 
   Future<void> loadResults() async {
     try {
-      // Check if user is authenticated
       final isAuthenticated = await AuthService.isAuthenticated();
       if (!isAuthenticated) {
         if (mounted) {
@@ -35,13 +38,20 @@ class _ResultsScreenState extends State<ResultsScreen> {
         return;
       }
 
-      // Get results from SharedPreferences (saved by review screen)
       final prefs = await SharedPreferences.getInstance();
+      final profileJson = prefs.getString("investIA_profile");
+      if (profileJson == null) {
+        if (mounted) {
+          Navigator.pushReplacementNamed(context, "/dashboard");
+        }
+        return;
+      }
+
       final resultsJson = prefs.getString("investIA_results");
 
       if (resultsJson == null) {
         if (mounted) {
-          Navigator.pushReplacementNamed(context, "/questionario");
+          Navigator.pushReplacementNamed(context, "/dashboard");
         }
         return;
       }
@@ -54,15 +64,11 @@ class _ResultsScreenState extends State<ResultsScreen> {
               .map((item) => Recommendation.fromMap(item))
               .toList();
 
-          // Handle different response structures
           if (data['perfil'] is String) {
-            // From /recommend endpoint
             profileMatch = {'perfil_tipo': data['perfil']};
           } else if (data['perfil'] is Map) {
-            // From /recommend endpoint with full profile
             profileMatch = data['perfil'] as Map<String, dynamic>;
           } else {
-            // From /match endpoint
             profileMatch = {
               'perfil_id': data['perfil_id'],
               'perfil_tipo': data['perfil_tipo'],
@@ -70,6 +76,7 @@ class _ResultsScreenState extends State<ResultsScreen> {
           }
 
           loading = false;
+          refreshing = false;
         });
       }
     } catch (e) {
@@ -77,8 +84,60 @@ class _ResultsScreenState extends State<ResultsScreen> {
         setState(() {
           error = 'Erro ao carregar resultados: $e';
           loading = false;
+          refreshing = false;
         });
       }
+    }
+  }
+
+  Future<void> _refreshRecommendations() async {
+    setState(() {
+      refreshing = true;
+      error = null;
+    });
+
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final profileJson = prefs.getString('investIA_profile');
+      if (profileJson == null) {
+        setState(() {
+          error = 'Perfil não configurado';
+          refreshing = false;
+        });
+        return;
+      }
+
+      final token = await TokenService.getToken();
+      if (token == null) {
+        setState(() {
+          error = 'Sessão expirada';
+          refreshing = false;
+        });
+        Navigator.pushReplacementNamed(context, '/login');
+        return;
+      }
+
+      final payload = {'top_n': 10};
+      final response = await http.post(
+        Uri.parse('${ApiConfig.baseUrl}match'),
+        headers: ApiConfig.authHeaders(token),
+        body: json.encode(payload),
+      );
+
+      if (response.statusCode == 200) {
+        await prefs.setString('investIA_results', response.body);
+        await loadResults();
+      } else {
+        setState(() {
+          error = 'Erro ao atualizar (${response.statusCode})';
+          refreshing = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        error = 'Erro: $e';
+        refreshing = false;
+      });
     }
   }
 
@@ -127,8 +186,13 @@ class _ResultsScreenState extends State<ResultsScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () =>
-              Navigator.pushReplacementNamed(context, "/dashboard"),
+          onPressed: () {
+            if (Navigator.canPop(context)) {
+              Navigator.pop(context);
+            } else {
+              Navigator.pushReplacementNamed(context, "/dashboard");
+            }
+          },
         ),
         centerTitle: true,
         title: const Text(
@@ -136,6 +200,11 @@ class _ResultsScreenState extends State<ResultsScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            tooltip: 'Atualizar recomendações',
+            onPressed: refreshing ? null : _refreshRecommendations,
+          ),
           IconButton(
             icon: const Icon(Icons.logout),
             tooltip: 'Sair',
@@ -200,6 +269,32 @@ class _ResultsScreenState extends State<ResultsScreen> {
                                   ).colorScheme.onSurface,
                                 ),
                           ),
+                          if (refreshing) ...[
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                const SizedBox(
+                                  height: 14,
+                                  width: 14,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                                const SizedBox(width: 8),
+                                Text(
+                                  'Atualizando...',
+                                  style: Theme.of(context).textTheme.bodySmall
+                                      ?.copyWith(
+                                        fontSize: 11,
+                                        color: Theme.of(context)
+                                            .colorScheme
+                                            .onSurface
+                                            .withOpacity(0.6),
+                                      ),
+                                ),
+                              ],
+                            ),
+                          ],
                         ],
                       ),
                     ],

@@ -5,8 +5,8 @@ import 'screens/cadastro_usuario.dart';
 import 'screens/questionario.dart';
 import 'screens/review.dart';
 import 'screens/dashboard.dart';
-import 'screens/explorar.dart';
 import 'screens/resultados.dart';
+import 'screens/explorar.dart';
 import 'screens/perfil.dart';
 import 'screens/detalhes.dart';
 import 'theme/app_theme.dart';
@@ -56,7 +56,7 @@ class _MyAppState extends State<MyApp> {
       themeMode: modoEscuro ? ThemeMode.dark : ThemeMode.light,
 
       //
-      // ✅ GERENCIAMENTO DE ROTAS COM ARGUMENTOS
+      // GERENCIAMENTO DE ROTAS COM ARGUMENTOS
       //
       onGenerateRoute: (settings) {
         switch (settings.name) {
@@ -82,13 +82,13 @@ class _MyAppState extends State<MyApp> {
             return MaterialPageRoute(
               builder: (context) => const ResultsScreen(),
             );
-          case '/dashboard':
-            return MaterialPageRoute(
-              builder: (context) => const DashboardScreen(),
-            );
           case '/explorar':
             return MaterialPageRoute(
               builder: (context) => const ExplorarScreen(),
+            );
+          case '/dashboard':
+            return MaterialPageRoute(
+              builder: (context) => const DashboardScreen(),
             );
           case '/perfil':
             return MaterialPageRoute(

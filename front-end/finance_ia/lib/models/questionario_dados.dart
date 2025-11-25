@@ -16,7 +16,6 @@ class QuestionnaireData {
   }) : setores = setores ?? [];
 
   factory QuestionnaireData.fromMap(Map<String, dynamic> map) {
-    // Handle nested preferences structure from backend
     final preferencias = map["preferencias"] ?? {};
 
     return QuestionnaireData(

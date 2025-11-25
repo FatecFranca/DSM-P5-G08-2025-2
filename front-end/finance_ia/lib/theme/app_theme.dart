@@ -1,23 +1,23 @@
 import 'package:flutter/material.dart';
 
 class AppTheme {
-  static const Color corPrincipal = Color(0xFF064C68); // Nova cor principal
+  static const Color corPrincipal = Color(0xFF064C68); 
 
-  // 🌞 Tema Claro
+  //  Tema Claro
   static final ThemeData lightTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.light,
     colorScheme: const ColorScheme(
       brightness: Brightness.light,
-      primary: corPrincipal, // cor principal
+      primary: corPrincipal, 
       onPrimary: Colors.white,
       secondary: Color(0xFFE0E0E0),
       onSecondary: Color(0xFF262626),
       error: Color(0xFFB71C1C),
       onError: Colors.white,
-      surface: Color(0xFFFFFFFF), // ✅ substitui background
+      surface: Color(0xFFFFFFFF), 
       onSurface: Color(0xFF262626),
-      surfaceContainerHighest: Color(0xFFF2F2F2), // ✅ cor alternativa clara
+      surfaceContainerHighest: Color(0xFFF2F2F2),
     ),
     scaffoldBackgroundColor: const Color(0xFFFFFFFF),
     appBarTheme: const AppBarTheme(
@@ -45,7 +45,7 @@ class AppTheme {
     ),
   );
 
-  // 🌙 Tema Escuro
+  // Tema Escuro
   static final ThemeData darkTheme = ThemeData(
     useMaterial3: true,
     brightness: Brightness.dark,
@@ -57,9 +57,9 @@ class AppTheme {
       onSecondary: Colors.white,
       error: Color(0xFFEF5350),
       onError: Colors.white,
-      surface: Color(0xFF1E1E1E), // ✅ substitui background
+      surface: Color(0xFF1E1E1E),
       onSurface: Colors.white,
-      surfaceContainerHighest: Color(0xFF2C2C2C), // ✅ mais escuro para contraste
+      surfaceContainerHighest: Color(0xFF2C2C2C), 
     ),
     scaffoldBackgroundColor: const Color(0xFF121212),
     appBarTheme: const AppBarTheme(

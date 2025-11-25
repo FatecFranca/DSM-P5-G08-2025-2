@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../components/auth_input.dart';
 import '../components/logo_header.dart';
 import '../components/primary_button.dart';
 import '../services/auth_service.dart';
+import '../services/profile_service.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -36,8 +39,10 @@ class _LoginScreenState extends State<LoginScreen> {
       final result = await AuthService.login(email: email, password: senha);
 
       if (result['success']) {
+        // Após login bem-sucedido, tenta carregar perfil do backend
+        await _loadProfileFromBackend();
+
         if (mounted) {
-          // Show success message
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
               content: Text("Login realizado com sucesso!"),
@@ -45,7 +50,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           );
 
-          // Navigate to dashboard and clear the entire stack
           Navigator.pushNamedAndRemoveUntil(
             context,
             '/dashboard',
@@ -71,6 +75,27 @@ class _LoginScreenState extends State<LoginScreen> {
           isLoading = false;
         });
       }
+    }
+  }
+
+  Future<void> _loadProfileFromBackend() async {
+    try {
+      final result = await ProfileService.getProfileRemote();
+
+      if (result['success'] && result['perfil'] != null) {
+        // Salva o perfil localmente
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setString(
+          'investIA_profile',
+          json.encode(result['perfil']),
+        );
+        print('[LOGIN] Perfil carregado do backend e salvo localmente');
+      } else {
+        print('[LOGIN] Nenhum perfil encontrado no backend');
+      }
+    } catch (e) {
+      print('[LOGIN] Erro ao carregar perfil do backend: $e');
+      // Não interrompe o login se falhar ao carregar perfil
     }
   }
 
@@ -108,7 +133,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 children: [
                   const SizedBox(height: 10),
 
-                  // 🔙 Cabeçalho com botão voltar
+                  // Cabeçalho com botão voltar
                   Row(
                     children: [
                       IconButton(
